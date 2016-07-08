@@ -97,7 +97,7 @@ export default {
         },
         buttonType: {
             type: String,
-            default: 'submit'
+            default: 'button'
         }
     },
 

@@ -7779,7 +7779,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        buttonType: {
 	            type: String,
-	            default: 'submit'
+	            default: 'button'
 	        }
 	    },
 	
