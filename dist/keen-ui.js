@@ -761,6 +761,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            return true;
 	        },
+	
 	        'dropdown-closed': function dropdownClosed() {
 	            if (this.containFocus) {
 	                document.removeEventListener('focus', this.restrictFocus, true);
@@ -2372,6 +2373,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            this.openDropdown();
 	        },
+	
 	        'ui-dropdown::close': function uiDropdownClose(id) {
 	            if (!this.eventTargetsComponent(id)) {
 	                return;
@@ -2379,6 +2381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            this.closeDropdown();
 	        },
+	
 	        'ui-dropdown::toggle': function uiDropdownToggle(id) {
 	            if (!this.eventTargetsComponent(id)) {
 	                return;
@@ -4868,6 +4871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            return true;
 	        },
+	
 	        'dropdown-closed': function dropdownClosed() {
 	            if (this.containFocus) {
 	                document.removeEventListener('focus', this.restrictFocus, true);
@@ -5953,6 +5957,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	
 	
+	    events: {
+	        'ui-input::set-validity': function uiInputSetValidity(valid, error, id) {
+	            if (!this.eventTargetsComponent(id)) {
+	                return;
+	            }
+	
+	            this.setValidity(valid, error);
+	        }
+	    },
+	
 	    methods: {
 	        validate: function validate() {
 	            if (!this.validationRules || !this.dirty) {
@@ -5968,12 +5982,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            };
 	
 	            var validation = new _validatorjs2.default(data, rules, this.validationMessages);
+	
 	            validation.setAttributeNames({ value: this.name.replace(/_/g, ' ') });
 	
-	            this.valid = validation.passes();
+	            this.setValidity(validation.passes(), validation.errors.first('value'));
+	        },
+	        setValidity: function setValidity(valid, error) {
+	            this.valid = valid;
 	
-	            if (!this.valid) {
-	                this.validationError = validation.errors.first('value');
+	            if (!valid && error && error.length) {
+	                this.validationError = error;
 	            }
 	        }
 	    }
@@ -8079,7 +8097,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return;
 	            }
 	
-	            this.setHeight();
+	            this.$nextTick(this.setHeight);
 	        }
 	    },
 	
@@ -8388,7 +8406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    watch: {
-	        'show': function show() {
+	        show: function show() {
 	            var _this = this;
 	
 	            this.$nextTick(function () {
@@ -12682,7 +12700,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        autocomplete: {
 	            type: String,
-	            default: 'off'
+	            default: 'on'
 	        },
 	        autofocus: {
 	            type: Boolean,
@@ -12801,8 +12819,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        keydown: function keydown(e) {
 	            this.$dispatch('keydown', e);
 	        },
+	        keyup: function keyup(e) {
+	            this.$dispatch('keyup', e);
+	        },
 	        keydownEnter: function keydownEnter(e) {
 	            this.$dispatch('keydown-enter', e);
+	        },
+	        focus: function focus() {
+	            this.$el.input.focus();
 	        }
 	    },
 	
@@ -12833,7 +12857,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 193 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div\n    class=\"ui-textbox\"\n    :class=\"{\n        'disabled': disabled, 'invalid': !valid, 'dirty': dirty, 'active': active,\n        'has-label': !hideLabel, 'is-multi-line': multiLine, 'icon-right': iconRight,\n        'has-counter': maxLength\n    }\"\n>\n    <div class=\"ui-textbox-icon-wrapper\" v-if=\"showIcon\">\n        <ui-icon :icon=\"icon\" class=\"ui-textbox-icon\"></ui-icon>\n    </div>\n\n    <div class=\"ui-textbox-content\">\n        <label class=\"ui-textbox-label\">\n            <div class=\"ui-textbox-label-text\" v-text=\"label\" v-if=\"!hideLabel\"></div>\n\n            <input\n                class=\"ui-textbox-input\" :type=\"type\" :placeholder=\"placeholder\" :name=\"name\"\n                :id=\"id\" :number=\"type === 'number' ? true : null\" :min=\"minValue\"\n                :max=\"maxValue\" :step=\"stepValue\" :autocomplete=\"autocomplete\"\n                v-autofocus=\"autofocus\"\n\n                @focus=\"focussed\" @blur=\"blurred\" @change=\"changed\" @keydown=\"keydown\"\n                @keydown.enter=\"keydownEnter\" :debounce=\"debounce\"\n\n                v-model=\"value | trim\" v-disabled=\"disabled\" v-if=\"!multiLine\"\n            >\n\n            <textarea\n                class=\"ui-textbox-textarea\" :placeholder=\"placeholder\" :name=\"name\" :id=\"id\"\n                :rows=\"rows\"\n\n                @focus=\"focussed\" @blur=\"blurred\" @change=\"changed\" @keydown=\"keydown\"\n                @keydown.enter=\"keydownEnter\" :debounce=\"debounce\"\n\n                v-model=\"value | trim\" v-disabled=\"disabled\" v-else\n            ></textarea>\n        </label>\n\n        <div class=\"ui-textbox-feedback\" v-if=\"showFeedback || maxLength\">\n            <div\n                class=\"ui-textbox-error-text\" transition=\"ui-textbox-feedback-toggle\"\n                v-text=\"validationError\" v-show=\"!hideValidationErrors && !valid\"\n            ></div>\n\n            <div\n                class=\"ui-textbox-help-text\" transition=\"ui-textbox-feedback-toggle\"\n                v-text=\"helpText\" v-else\n            ></div>\n\n            <div\n                class=\"ui-textbox-counter\" v-text=\"value.length + '/' + maxLength\"\n                v-if=\"maxLength\"\n            ></div>\n        </div>\n    </div>\n</div>\n";
+	module.exports = "\n<div\n    class=\"ui-textbox\"\n    :class=\"{\n        'disabled': disabled, 'invalid': !valid, 'dirty': dirty, 'active': active,\n        'has-label': !hideLabel, 'is-multi-line': multiLine, 'icon-right': iconRight,\n        'has-counter': maxLength\n    }\"\n>\n    <div class=\"ui-textbox-icon-wrapper\" v-if=\"showIcon\">\n        <ui-icon :icon=\"icon\" class=\"ui-textbox-icon\"></ui-icon>\n    </div>\n\n    <div class=\"ui-textbox-content\">\n        <label class=\"ui-textbox-label\">\n            <div class=\"ui-textbox-label-text\" v-text=\"label\" v-if=\"!hideLabel\"></div>\n\n            <input v-el:input\n                class=\"ui-textbox-input\" :type=\"type\" :placeholder=\"placeholder\" :name=\"name\"\n                :id=\"id\" :number=\"type === 'number' ? true : null\" :min=\"minValue\"\n                :max=\"maxValue\" :step=\"stepValue\" :autocomplete=\"autocomplete\"\n                v-autofocus=\"autofocus\"\n\n                @focus=\"focussed\" @blur=\"blurred\" @change=\"changed\" @keydown=\"keydown\" @keyup=\"keyup\"\n                @keydown.enter=\"keydownEnter\" :debounce=\"debounce\"\n\n                v-model=\"value | trim\" v-disabled=\"disabled\" v-if=\"!multiLine\"\n            >\n\n            <textarea v-el:input\n                class=\"ui-textbox-textarea\" :placeholder=\"placeholder\" :name=\"name\" :id=\"id\"\n                :rows=\"rows\"\n\n                @focus=\"focussed\" @blur=\"blurred\" @change=\"changed\" @keydown=\"keydown\" @keyup=\"keyup\"\n                @keydown.enter=\"keydownEnter\" :debounce=\"debounce\"\n\n                v-model=\"value | trim\" v-disabled=\"disabled\" v-else\n            ></textarea>\n        </label>\n\n        <div class=\"ui-textbox-feedback\" v-if=\"showFeedback || maxLength\">\n            <div\n                class=\"ui-textbox-error-text\" transition=\"ui-textbox-feedback-toggle\"\n                v-text=\"validationError\" v-show=\"!hideValidationErrors && !valid\"\n            ></div>\n\n            <div\n                class=\"ui-textbox-help-text\" transition=\"ui-textbox-feedback-toggle\"\n                v-text=\"helpText\" v-else\n            ></div>\n\n            <div\n                class=\"ui-textbox-counter\" v-text=\"value.length + '/' + maxLength\"\n                v-if=\"maxLength\"\n            ></div>\n        </div>\n    </div>\n</div>\n";
 
 /***/ },
 /* 194 */

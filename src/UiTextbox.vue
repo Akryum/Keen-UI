@@ -15,23 +15,23 @@
             <label class="ui-textbox-label">
                 <div class="ui-textbox-label-text" v-text="label" v-if="!hideLabel"></div>
 
-                <input
+                <input v-el:input
                     class="ui-textbox-input" :type="type" :placeholder="placeholder" :name="name"
                     :id="id" :number="type === 'number' ? true : null" :min="minValue"
                     :max="maxValue" :step="stepValue" :autocomplete="autocomplete"
                     v-autofocus="autofocus"
 
-                    @focus="focussed" @blur="blurred" @change="changed" @keydown="keydown"
+                    @focus="focussed" @blur="blurred" @change="changed" @keydown="keydown" @keyup="keyup"
                     @keydown.enter="keydownEnter" :debounce="debounce"
 
                     v-model="value | trim" v-disabled="disabled" v-if="!multiLine"
                 >
 
-                <textarea
+                <textarea v-el:input
                     class="ui-textbox-textarea" :placeholder="placeholder" :name="name" :id="id"
                     :rows="rows"
 
-                    @focus="focussed" @blur="blurred" @change="changed" @keydown="keydown"
+                    @focus="focussed" @blur="blurred" @change="changed" @keydown="keydown" @keyup="keyup"
                     @keydown.enter="keydownEnter" :debounce="debounce"
 
                     v-model="value | trim" v-disabled="disabled" v-else
@@ -224,8 +224,16 @@ export default {
             this.$dispatch('keydown', e);
         },
 
+        keyup(e) {
+            this.$dispatch('keyup', e);
+        },
+
         keydownEnter(e) {
             this.$dispatch('keydown-enter', e);
+        },
+
+        focus() {
+          this.$el.input.focus();
         }
     },
 
