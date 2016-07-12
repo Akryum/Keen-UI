@@ -89,6 +89,7 @@ export default {
                 this.drop.close();
             }
 
+            this.drop.on('open', this.positionDrop);
             this.drop.on('open', this.dropdownOpened);
             this.drop.on('close', this.dropdownClosed);
         },
@@ -96,6 +97,30 @@ export default {
         openDropdown() {
             if (this.drop) {
                 this.drop.open();
+            }
+        },
+
+        /**
+         * Ensures drop is horizontally within viewport (vertical is already solved by drop.js).
+         * https://github.com/HubSpot/drop/issues/16
+         */
+        positionDrop() {
+            const drop = this.drop;
+            const windowWidth = window.innerWidth
+                || document.documentElement.clientWidth
+                || document.body.clientWidth;
+
+            let dropWidth = drop.drop.getBoundingClientRect().width;
+            let left = drop.target.getBoundingClientRect().left;
+            let availableSpace = windowWidth - left;
+
+            if (dropWidth > availableSpace) {
+                let direction = dropWidth > availableSpace ? 'right' : 'left';
+
+                drop.tether.attachment.left = direction;
+                drop.tether.targetAttachment.left = direction;
+
+                drop.position();
             }
         },
 
